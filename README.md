@@ -21,6 +21,7 @@ Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN�
   ./gradlew test
   ./gradlew bootRun 启动项目
   ./gradlew bootBuildImage 使用Cloud Native Buildpacks将应用打包为镜像，避免编写Dockerfile
+  ./gradlew bootJar 将应用打包为jar文件，默认生成在build/libs/目录
 
 2. docker命令
   docker images 查看镜像详情

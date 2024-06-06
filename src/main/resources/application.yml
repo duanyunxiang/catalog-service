@@ -1,0 +1,14 @@
+spring.application.name: catalog-service
+
+# 配置嵌入式服务器
+server:
+  port: 9001
+  tomcat:
+    # 等待响应返回超时时间
+    connection-timeout: 2s
+    keep-alive-timeout: 15s
+    # 每个请求一个线程
+    threads:
+      max: 50
+      # 线程池最小线程数
+      min-spare: 5

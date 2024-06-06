@@ -41,4 +41,11 @@ public class BookControllerAdvice {
         });
         return errors;
     }
+
+    //捕获其它RuntimeException异常
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String otherRuntimeException(RuntimeException ex){
+        return ex.getMessage();
+    }
 }

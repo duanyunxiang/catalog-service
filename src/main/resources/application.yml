@@ -1,5 +1,7 @@
 spring.application.name: catalog-service
 
+# spring.profiles.active: testdata
+
 # 配置嵌入式服务器
 server:
   port: 9001
@@ -12,3 +14,8 @@ server:
       max: 50
       # 线程池最小线程数
       min-spare: 5
+
+polar:
+  greeting: Welcome to the local book catalog!
+  testdata:
+    enabled: true

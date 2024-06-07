@@ -2,13 +2,15 @@ package com.polarbookshop.catalogservice.persistence;
 
 import com.polarbookshop.catalogservice.domain.Book;
 import com.polarbookshop.catalogservice.domain.BookRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Repository
+//@Repository
+@ConditionalOnProperty(name="polar.enableMemRepo",havingValue = "true")
 public class InMemoryBookRepository implements BookRepository {
     //将图书存在内存中，便于测试
     private static final Map<String,Book> books=new ConcurrentHashMap<>();

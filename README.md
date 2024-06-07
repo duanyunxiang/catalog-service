@@ -26,6 +26,9 @@ Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN�
 2. docker命令
   docker images 查看镜像详情
   docker run --rm --name catalog-service -p 8080:8080 catalog-service:0.0.1-SNAPSHOT 基于镜像运行容器，--rm 表示容器停止时自动删除容器，添加 -d 在后台运行
+  # 在docker中启动PostgreSQL数据库
+  # docker pull postgres:14.4
+  docker run -d --name polar-postgres -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=polardb_catalog -p 5432:5432 postgres:14.4
 
 3. minikube机器ctl命令
   minikube delete 启动错误，可以尝试删除minikube再重建

@@ -13,7 +13,7 @@ public class BookJsonTests {
     @Autowired
     private JacksonTester<Book> jsonTool;
 
-    private final Book book=new Book("1234567890","Title","Author",9.90);
+    private final Book book=Book.of("1234567890","Title","Author",9.90);
 
     @Test
     void testSerialize() throws Exception {

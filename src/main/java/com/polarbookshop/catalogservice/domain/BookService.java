@@ -27,11 +27,16 @@ public class BookService {
         bookRepository.deleteByIsbn(isbn);
     }
 
+    /**
+     * 编辑图书
+     */
     public Book editBookDetails(String isbn,Book book){
         return bookRepository.findByIsbn(isbn)
                 //修改
-                .map(existingBook ->{
-                    var bookToUpdate=new Book(existingBook.isbn(), book.title(), book.author(), book.price());
+                .map(existBook ->{
+                    var bookToUpdate=new Book(existBook.id(),
+                            existBook.isbn(), book.title(), book.author(), book.price(),
+                            existBook.createDate(), existBook.lastModifiedDate(),existBook.version());
                     return bookRepository.save(bookToUpdate);
                 })
                 //新增

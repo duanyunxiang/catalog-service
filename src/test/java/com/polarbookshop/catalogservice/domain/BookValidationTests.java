@@ -25,7 +25,7 @@ public class BookValidationTests {
     //直接运行报错时，设置：File -> Settings -> 检索Gradle -> Run tests using 改为 Intellij IDEA
     @Test
     public void whenAllFieldsCorrectThenValidationSucceeds(){
-        var book=new Book("1234567890","Title","Author",9.90);
+        var book=Book.of("1234567890","Title","Author",9.90);
         Set<ConstraintViolation<Book>> violations=validator.validate(book);
         //断言没有error
         Assertions.assertThat(violations).isEmpty();
@@ -33,7 +33,7 @@ public class BookValidationTests {
 
     @Test
     public void whenIsBnDefinedButIncorrectThenValidationFails(){
-        var book=new Book("a234567890","Title","Author",9.90);
+        var book=Book.of("a234567890","Title","Author",9.90);
         Set<ConstraintViolation<Book>> violations=validator.validate(book);
         //断言有1个error
         Assertions.assertThat(violations).hasSize(1);

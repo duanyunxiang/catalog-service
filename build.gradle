@@ -43,6 +43,11 @@ dependencies {
     // 使用配置刷新
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+    // 引入spring data jdbc
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    // 提供postgreSql驱动
+    runtimeOnly 'org.postgresql:postgresql'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     //响应式web框架webflux
     testImplementation 'org.springframework.boot:spring-boot-starter-webflux'

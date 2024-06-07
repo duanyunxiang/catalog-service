@@ -25,6 +25,17 @@ spring:
         max-interval: 2000
         # 下一次间隔的乘数
         multiplier: 1.1
+  # 配置数据源
+  datasource:
+    username: user
+    password: password
+    url: jdbc:postgresql://localhost:5432/polardb_catalog
+    # spring使用的连接池
+    hikari:
+      connection-timeout: 2000
+      maximum-pool-size: 5
+  # 应用启动时，从数据库脚本schema.sql初始化数据库模式
+  # sql.init.mode: always
 
 management:
   endpoints:
@@ -48,7 +59,10 @@ server:
       # 线程池最小线程数
       min-spare: 5
 
+# 自定义属性
 polar:
   greeting: Welcome to the local book catalog!
   testdata:
     enabled: true
+  # 是否启用InMemoryBookRepository
+  enableMemRepo: false

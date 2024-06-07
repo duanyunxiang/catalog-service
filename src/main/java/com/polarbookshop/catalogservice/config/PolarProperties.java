@@ -13,6 +13,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class PolarProperties {
     private String greeting;
 
+    private Boolean enableMemRepo;
+
     private Testdata testdata;
 
     @Getter

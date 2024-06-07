@@ -22,6 +22,11 @@ configurations {
     }
 }
 
+ext {
+    // spring cloud的版本
+    set('springCloudVersion', "2023.0.2")
+}
+
 dependencies {
     //引入lombok
     compileOnly 'org.projectlombok:lombok:1.18.30'
@@ -31,11 +36,24 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // 使用spring cloud config client
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    // 使用重试模式
+    implementation 'org.springframework.retry:spring-retry'
+    // 使用配置刷新
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     //响应式web框架webflux
     testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+    imports {
+        // spring cloud依赖管理的BOM
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 tasks.named('test') {

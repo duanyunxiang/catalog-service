@@ -34,6 +34,8 @@ public record Book(
         @Positive(message = "The book price must be grater than zero.")
         Double price,
 
+        String publisher,
+
         //审计类字段；Instant是java时间戳类型，jdk11引入
         @CreatedDate
         Instant createDate,
@@ -45,7 +47,10 @@ public record Book(
         int version
 ) {
         public static Book of(String isbn,String title,String author,Double price){
+                return new Book(null,isbn,title,author,price,null,null,null,0);
+        }
+        public static Book of(String isbn,String title,String author,Double price,String publisher){
                 //id和version由框架负责赋值
-                return new Book(null,isbn,title,author,price,null,null,0);
+                return new Book(null,isbn,title,author,price,publisher,null,null,0);
         }
 }

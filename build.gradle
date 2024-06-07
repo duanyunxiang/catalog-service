@@ -50,6 +50,9 @@ dependencies {
     // 提供postgreSql驱动
     runtimeOnly 'org.postgresql:postgresql'
 
+    //引入flyway，最新版本不支持postgreSql 14.4
+    implementation 'org.flywaydb:flyway-core:9.22.3'
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     //响应式web框架webflux
     testImplementation 'org.springframework.boot:spring-boot-starter-webflux'

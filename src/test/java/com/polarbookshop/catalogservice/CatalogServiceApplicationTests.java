@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 /**
@@ -14,6 +15,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
  */
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//激活profile，使用Testcontainers
+@ActiveProfiles("integration")
 class CatalogServiceApplicationTests {
     //由webflux提供
     @Autowired
@@ -31,6 +34,7 @@ class CatalogServiceApplicationTests {
                 //期望响应码=201
                 .expectStatus().isCreated()
                 .expectBody(Book.class).value(actualBook->{
+                    log.info("actualBook={}",actualBook);
                     //校验创建的对象符合预期
                     Assertions.assertThat(actualBook).isNotNull();
                     Assertions.assertThat(actualBook.isbn()).isEqualTo(expectedBook.isbn());

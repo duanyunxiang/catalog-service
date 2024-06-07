@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    # 指定testcontainers中的postgreSql模块作为数据源
+    url: jdbc:tc:postgresql:14.4:///
+  # 初始化容器中的数据库（测试用）
+  sql.init.mode: always

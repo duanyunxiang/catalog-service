@@ -34,6 +34,7 @@
   # 6.3节
   docker-compose --version  检查docker compose版本
   docker-compose up -d  以detached模式启动容器，在docker-compose.yml所在目录运行
+  docker-compose down  停止并移除容器
 
 3. minikube机器ctl命令
   minikube delete  启动错误，可以尝试删除minikube再重建

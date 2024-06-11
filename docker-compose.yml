@@ -13,11 +13,17 @@ services:
     # 端口映射
     ports:
       - 9001:9001
+      # 调试用端口
+      - 8001:8001
     # 环境变量
     environment:
+      # Buildpacks设置内存计算的线程数量
       - BPL_JVM_THREAD_COUNT=50
       - SPRING_DATASOURCE_URL=jdbc:postgresql://polar-postgres:5432/polardb_catalog
       - SPRING_PROFILES_ACTIVE=testdata
+      # 启动调试，由Buildpacks提供
+      - BPL_DEBUG_ENABLED=true
+      - BPL_DEBUG_PORT=8001
 
   # 数据库容器
   polar-postgres:

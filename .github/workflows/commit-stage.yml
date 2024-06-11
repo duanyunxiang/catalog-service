@@ -69,5 +69,27 @@ jobs:
           cache: gradle
       - name: "构建镜像"
         run: |
-          chmod -x gradlew
+          chmod +x gradlew
           ./gradlew bootBuildImage --imageName ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.VERSION}}
+      - name: "OCI镜像漏洞扫描"
+        uses: anchore/scan-action@v3
+        id: scan
+        with:
+          image: ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.VERSION}}
+          fail-build: false
+          severity-cutoff: high
+          acs-report-enable: true
+      - name: "上传漏洞报告"
+        uses: github/codeql-action/upload-sarif@v3
+        if: success() || failure()
+        with:
+          sarif_file: ${{steps.scan.outputs.sarif}}
+      - name: "登录容器注册中心"
+        uses: docker/login-action@v2
+        with:
+          registry: ${{env.REGISTRY}}
+          # 由github actions提供
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+      - name : "push镜像"
+        run: docker push ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.VERSION}}

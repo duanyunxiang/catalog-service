@@ -3,8 +3,14 @@ name: Commit Stage
 # 触发时机
 on: push
 
+env:
+  # 使用github容器注册中心
+  REGISTRY: ghcr.io
+  IMAGE_NAME: duanyunxiang/catalog-service
+  VERSION: latest
+
 jobs:
-  # job的唯一标识符
+  # 构建job，build是job的唯一标识符
   build:
     name: Build and Test
     runs-on: ubuntu-22.04
@@ -39,3 +45,29 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew build
+  # 打包job
+  package:
+    name: Package and Publish
+    # 只在master分支上运行该job
+    if: ${{ github.ref == 'refs/heads/master }}
+    # build job成功时才运行
+    needs: [build]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      # 上传镜像到github容器注册中心的权限
+      package: write
+      security-events: write
+      steps:
+        - name: "检查源码"
+          uses: actions/checkout@v3
+        - name: "安装JDK"
+          uses: actions/setup-java@v3
+          with:
+            distribution: temurin
+            java-version: 17
+            cache: gradle
+        - name: "构建镜像"
+          run: |
+            chmod -x gradlew
+            ./gradlew bootBuildImage --imageName ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.VERSION}}

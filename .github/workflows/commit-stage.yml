@@ -49,7 +49,7 @@ jobs:
   package:
     name: Package and Publish
     # 只在master分支上运行该job
-    if: ${{ github.ref == 'refs/heads/master }}
+    if: ${{ github.ref == 'refs/heads/master' }}
     # build job成功时才运行
     needs: [build]
     runs-on: ubuntu-22.04

@@ -56,18 +56,18 @@ jobs:
     permissions:
       contents: read
       # 上传镜像到github容器注册中心的权限
-      package: write
+      packages: write
       security-events: write
-      steps:
-        - name: "检查源码"
-          uses: actions/checkout@v3
-        - name: "安装JDK"
-          uses: actions/setup-java@v3
-          with:
-            distribution: temurin
-            java-version: 17
-            cache: gradle
-        - name: "构建镜像"
-          run: |
-            chmod -x gradlew
-            ./gradlew bootBuildImage --imageName ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.VERSION}}
+    steps:
+      - name: "检查源码"
+        uses: actions/checkout@v3
+      - name: "安装JDK"
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: "构建镜像"
+        run: |
+          chmod -x gradlew
+          ./gradlew bootBuildImage --imageName ${{env.REGISTRY}}/${{env.IMAGE_NAME}}:${{env.VERSION}}

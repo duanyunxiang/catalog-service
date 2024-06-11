@@ -1,0 +1,32 @@
+# docker compose语法版本
+version: "3.8"
+# 所有要运行的容器
+services:
+  # 应用容器
+  catalog-service:
+    # 在数据库之后启动
+    depends_on:
+      - polar-postgres
+    # 基于哪个镜像运行容器
+    image: "catalog-service"
+    container_name: "catalog-service"
+    # 端口映射
+    ports:
+      - 9001:9001
+    # 环境变量
+    environment:
+      - BPL_JVM_THREAD_COUNT=50
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://polar-postgres:5432/polardb_catalog
+      - SPRING_PROFILES_ACTIVE=testdata
+
+  # 数据库容器
+  polar-postgres:
+    image: "postgres:14.4"
+    container_name: "polar-postgres"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=polardb_catalog
+    

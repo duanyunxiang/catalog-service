@@ -23,13 +23,17 @@
   # 6.2节
   docker network create catalog-network  创建网络
   docker network ls  查看创建的网络
-  docker rm -f catalog-network  删除网络
+  docker network rm catalog-network  删除网络
   # 启动PostgreSQL数据库并声明网络
   docker run -d --name polar-postgres --net catalog-network -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=polardb_catalog -p 5432:5432 postgres:14.4
-  docker build -t catalog-service .  构建容器镜像，在项目根目录执行，先确保jar制品已存在
+  docker build -t catalog-service .  基于Dockerfile构建容器镜像，在项目根目录执行，先确保jar制品已存在
   # 使用环境变量，指定容器中要使用的配置
   docker run -d --name catalog-service --net catalog-network -p 9001:9001 -e SPRING_DATASOURCE_URL=jdbc:postgresql://polar-postgres:5432/polardb_catalog -e SPRING_PROFILES_ACTIVE=testdata catalog-service
   docker rm -f catalog-service polar-postgres  删除容器
+
+  # 6.3节
+  docker-compose --version  检查docker compose版本
+  docker-compose up -d  以detached模式启动容器，在docker-compose.yml所在目录运行
 
 3. minikube机器ctl命令
   minikube delete  启动错误，可以尝试删除minikube再重建

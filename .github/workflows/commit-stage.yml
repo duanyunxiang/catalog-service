@@ -33,6 +33,7 @@ jobs:
         id: scan
         with:
           path: "${{github.workspace}}"
+          # false-扫描失败，还是继续，在github仓库Security区找扫描结果
           fail-build: false
           severity-cutoff: high
           acs-report-enable: true

@@ -73,3 +73,21 @@ dependencyManagement {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// 使用buildpacks构建docker镜像的配置
+bootBuildImage {
+    // 没有指定label，默认latest
+    imageName = "${project.name}"
+    // 指定java版本
+    environment = ["BP_JVM_VERSION" : "17.*"]
+
+    // 构建镜像时，同时推送至远程容器注册中心
+//    docker {
+//        publishRegistry {
+//            username = project.findProperty("registryUsername")
+//            password = project.findProperty("registryToken")
+//            // 启动参数形式无法识别为字符串
+//            url = "ghcr.io"
+//        }
+//    }
+}

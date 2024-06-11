@@ -5,7 +5,10 @@
 1. gradlew命令（默认在项目root目录下执行）
   ./gradlew test
   ./gradlew bootRun  启动项目
-  ./gradlew bootBuildImage  使用Cloud Native Buildpacks将应用打包为镜像，避免编写Dockerfile
+  # 使用Cloud Native Buildpacks将应用打包为镜像，避免编写Dockerfile
+  ./gradlew bootBuildImage
+  # 构建镜像后，同时发布到github容器注册中心，<token>替换为实际值
+  ./gradlew bootBuildImage --imageName ghcr.io/duanyunxiang/catalog-service --publishImage -PregistryUsername=duanyunxiang -PregistryToken=<token>
   ./gradlew bootJar  将应用打包为jar文件，默认生成在build/libs/目录
 
   ./gradlew clean bootJar  构建jar制品，build/libs/
@@ -20,6 +23,7 @@
   # 6.2节
   docker network create catalog-network  创建网络
   docker network ls  查看创建的网络
+  docker rm -f catalog-network  删除网络
   # 启动PostgreSQL数据库并声明网络
   docker run -d --name polar-postgres --net catalog-network -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_DB=polardb_catalog -p 5432:5432 postgres:14.4
   docker build -t catalog-service .  构建容器镜像，在项目根目录执行，先确保jar制品已存在

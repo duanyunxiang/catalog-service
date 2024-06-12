@@ -47,3 +47,6 @@ spec:
               value: jdbc:postgresql://polar-postgres:5432/polardb_catalog
             - name: SPRING_PROFILES_ACTIVE
               value: testdata
+              # 指定集群中配置服务地址
+            - name: SPRING_CLOUD_CONFIG_URI
+              value: http://config-service

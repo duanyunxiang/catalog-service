@@ -71,9 +71,9 @@
   kubectl port-forward service/catalog-service 9001:80  端口转发，9001向集群外暴露的端口，80是集群内Service的端口
   kubectl delete -f k8s  在catalog-service项目根目录执行，以删除所有对象
 
-4. tilt命令
-  tilt up  在catalog-service项目根目录运行，启动Tilt；使用http://localhost:10350/访问控制台，使用ctrl+c终止进程
-  tilt down  卸载应用
+4. tilt 自动化本地开发工作流的工具
+  tilt up  在catalog-service项目根目录运行，启动Tilt；使用http://localhost:10350/访问控制台，使用ctrl+c终止进程，终止时集群中应用还是存在
+  tilt down  卸载集群中应用
 
 5. octant 可视化k8s工具，加入系统环境变量Path
   octant  打开octant控制台；使用ctrl+c终止进程

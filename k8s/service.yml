@@ -1,0 +1,20 @@
+# Service对象的api版本
+apiVersion: v1
+# 类型
+kind: Service
+metadata:
+  # Service的名称
+  name: catalog-service
+  labels:
+    app: catalog-service
+spec:
+  # Service的类型
+  type: ClusterIP
+  selector:
+    app: catalog-service
+  ports:
+    - protocol: TCP
+      # Service向外暴露的端口
+      port: 80
+      # Service的目标Pod暴露的端口
+      targetPort: 9001

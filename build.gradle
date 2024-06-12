@@ -76,6 +76,7 @@ tasks.named('test') {
 
 // 使用buildpacks构建docker镜像的配置
 bootBuildImage {
+    builder = "docker.io/paketobuildpacks/builder-jammy-base:0.4.302"
     // 没有指定label，默认latest
     imageName = "${project.name}"
     // 指定java版本

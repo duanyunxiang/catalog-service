@@ -1,0 +1,49 @@
+# Deployment对象的api版本
+apiVersion: apps/v1
+# 对象类型
+kind: Deployment
+metadata:
+  # Deployment名
+  name: catalog-service
+  # 附加标签
+  labels:
+    # app=catalog-service标签
+    app: catalog-service
+spec:
+  # 应该部署的Pod副本数量，由ReplicaSet(Pod控制器的一种)管理
+  replicas: 1
+  # 定义选择Pod的标签，便于扩展
+  selector:
+    matchLabels:
+      app: catalog-service
+  # 创建Pod的模板
+  template:
+    metadata:
+      # Pod对象附加的标签，它们应该与selector使用的值匹配
+      labels:
+        app: catalog-service
+    spec:
+      # Pod中容器的列表，本例中只有一个容器
+       containers:
+          # Pod名
+        - name: catalog-service
+          image: catalog-service
+          # 只有本地镜像不存在时，k8s才会从容器注册中心拉取镜像
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            # 让k8s发送SIGTERM信号到Pod之前等5秒，以便请求不会转发到正在终止的Pod上
+            preStop:
+              exec:
+                command: ["sh","-c","sleep 5"]
+          ports:
+              # 容器对外暴露的端口
+            - containerPort: 9001
+          # 传递给Pod环境变量
+          env:
+            - name: BPL_JVM_THREAD_COUNT
+              value: "50"
+            - name: SPRING_DATASOURCE_URL
+              # polar-postgres是部署在集群中的数据库Service名称
+              value: jdbc:postgresql://polar-postgres:5432/polardb_catalog
+            - name: SPRING_PROFILES_ACTIVE
+              value: testdata

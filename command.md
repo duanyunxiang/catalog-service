@@ -32,7 +32,7 @@
   docker-compose up -d  以detached模式启动容器，在docker-compose.yml所在目录运行
   docker-compose down  停止并移除容器
 
-3. minikube机器ctl命令
+3. minikube集群ctl命令
   minikube delete  启动错误，可以尝试删除minikube再重建
   minikube start --driver=docker  启动minikube
   minikube stop
@@ -41,7 +41,7 @@
 
   kubectl version --client  查看kubectl版本
   kubectl get nodes  检查minikube是否正确启动
-  kubectl config use-context minikube
+  kubectl config use-context minikube  设置当前交互context
   kubectl create deployment catalog-service --image=catalog-service:0.0.1-SNAPSHOT  指导k8s将应用创建为Pod，Deployment名为catalog-service
   kubectl get deployment  查看deployment
   kubectl get pod  查看pod
@@ -50,3 +50,33 @@
   kubectl port-forward service/catalog-service 8000:8080  将主机8000端口转发到集群中service的8080端口（使用ctrl+c终止端口转发）
   kubectl delete service catalog-service
   kubectl delete deployment catalog-service
+  
+  # 7.1节
+  minikube start --cpus 2 --memory 4g --driver docker --profile polar  创建名为polar的新k8s集群
+  kubectl config get-contexts 列出所有可交互的context
+  kubectl config current-context 检查当前正在交互的context
+  minikube stop --profile polar  停掉polar集群
+  minikube delete --profile polar  删除polar集群
+  # 将镜像导入本地集群
+  minikube image load catalog-service --profile polar
+  # 在catalog-service项目根目录执行
+  kubectl apply -f k8s/deployment.yml  启动和更新Deployment
+  kubectl get all -l app=catalog-service  查看对象创建情况
+  kubectl get pods -l app=catalog-service  查看Pod情况
+  kubectl delete pod <pod-name>  删除某个Pod
+  kubectl logs deployment/catalog-service  查看Deployment日志
+  # 创建Service
+  kubectl apply -f k8s/service.yml
+  kubectl get svc -l app=catalog-service  查看Service情况
+  kubectl port-forward service/catalog-service 9001:80  端口转发，9001向集群外暴露的端口，80是集群内Service的端口
+  kubectl delete -f k8s  在catalog-service项目根目录执行，以删除所有对象
+
+4. tilt命令
+  tilt up  在catalog-service项目根目录运行，启动Tilt；使用http://localhost:10350/访问控制台，使用ctrl+c终止进程
+  tilt down  卸载应用
+
+5. octant 可视化k8s工具，加入系统环境变量Path
+  octant  打开octant控制台；使用ctrl+c终止进程
+
+6. kubeval 校验k8s清单工具，官方不再维护，改为kubeconform，入系统环境变量Path
+  kubeval --strict -d k8s  在项目根目录运行以检查k8s/下的清单

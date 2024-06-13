@@ -13,7 +13,7 @@ public class BookService {
     }
 
     public Book viewBookDetails(String isbn){
-        return bookRepository.findByIsbn(isbn).orElseThrow(()->new BookNotFoundException(isbn));
+        return bookRepository.findByIsbn(isbn).orElse(null);
     }
 
     public Book addBookToCatalog(Book book){

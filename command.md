@@ -59,6 +59,13 @@
   minikube delete --profile polar  删除polar集群
   # 将镜像导入本地集群
   minikube image load catalog-service --profile polar
+
+  minikube addons enable ingress --profile polar  为集群启用ingress
+  kubectl get all -n ingress-nginx
+  kubectl get ingress  查看ingress情况
+  minikube ip --profile polar  获取集群的ip
+  minikube tunnel --profile polar  开启隧道，将集群暴露到本地环境中，windows才能访问，直接用127.0.0.1访问
+
   # 在catalog-service项目根目录执行
   kubectl apply -f k8s/deployment.yml  启动和更新Deployment
   kubectl get all -l app=catalog-service  查看对象创建情况
@@ -71,6 +78,8 @@
   kubectl port-forward service/catalog-service 9001:80  端口转发，9001向集群外暴露的端口，80是集群内Service的端口
   kubectl delete -f k8s  在catalog-service项目根目录执行，以删除所有对象
 
+  kubectl apply -f k8s  将应用部署到集群中（确保image已导入集群中），不使用tilt up（此时没有转发策略）
+
 4. tilt 自动化本地开发工作流的工具
   tilt up  在catalog-service项目根目录运行，启动Tilt；使用http://localhost:10350/访问控制台，使用ctrl+c终止进程，终止时集群中应用还是存在
   tilt down  卸载集群中应用
@@ -80,3 +89,10 @@
 
 6. kubeval 校验k8s清单工具，官方不再维护，改为kubeconform，入系统环境变量Path
   kubeval --strict -d k8s  在项目根目录运行以检查k8s/下的清单
+
+7. 安装chocolatey
+  Get-ExecutionPolicy  查看状态：Unrestricted-允许任何脚本运行，Restricted-脚本不能运行 
+  Set-ExecutionPolicy Restricted  设置状态
+  Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+  choco -v  检查安装版本
+  choco install openssh  安装最新版openSSH

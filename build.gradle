@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.3.0'
-    id 'io.spring.dependency-management' version '1.1.5'
+    id 'org.springframework.boot' version '2.7.18'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
 group = 'com.polarbookshop'
@@ -24,7 +24,7 @@ configurations {
 
 ext {
     // spring cloud的版本
-    set('springCloudVersion', "2023.0.2")
+    set('springCloudVersion', "2021.0.8")
     // 指定Testcontainers版本，用于配置测试用、轻量级的postgreSql容器
     set('testcontainersVersion',"1.17.3")
 }
@@ -52,6 +52,8 @@ dependencies {
 
     //引入flyway，最新版本不支持postgreSql 14.4
     implementation 'org.flywaydb:flyway-core:9.22.3'
+    // 引入OAuth2资源服务器
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     //响应式web框架webflux

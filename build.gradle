@@ -26,7 +26,9 @@ ext {
     // spring cloud的版本
     set('springCloudVersion', "2021.0.8")
     // 指定Testcontainers版本，用于配置测试用、轻量级的postgreSql容器
-    set('testcontainersVersion',"1.17.3")
+    set('testcontainersVersion',"1.19.3")
+    // Testcontainers Keycloak版本
+    set('testKeycloakVersion',"2.3.0")
 }
 
 dependencies {
@@ -58,10 +60,13 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     //响应式web框架webflux
     testImplementation 'org.springframework.boot:spring-boot-starter-webflux'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
     // 容器化管理测试用postgreSql数据库
     testImplementation 'org.testcontainers:postgresql'
+    // 引入OAuth2测试类
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    // 提供keycloak测试工具
+    testImplementation "com.github.dasniko:testcontainers-keycloak:${testKeycloakVersion}"
 }
 
 dependencyManagement {

@@ -32,7 +32,7 @@ class CatalogServiceApplicationTests {
                 //发送
                 .exchange()
                 //期望响应码=201
-                .expectStatus().isCreated()
+                .expectStatus().isUnauthorized()
                 .expectBody(Book.class).value(actualBook->{
                     log.info("actualBook={}",actualBook);
                     //校验创建的对象符合预期

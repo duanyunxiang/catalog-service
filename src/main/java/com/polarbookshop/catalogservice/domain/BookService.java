@@ -36,7 +36,8 @@ public class BookService {
                 .map(existBook ->{
                     var bookToUpdate=new Book(existBook.id(),
                             existBook.isbn(), book.title(), book.author(), book.price(),book.publisher(),
-                            existBook.createDate(), existBook.lastModifiedDate(),null,null,existBook.version());
+                            existBook.createDate(), existBook.lastModifiedDate(),
+                            existBook.createdBy(), existBook.lastModifiedBy(), existBook.version());
                     return bookRepository.save(bookToUpdate);
                 })
                 //新增

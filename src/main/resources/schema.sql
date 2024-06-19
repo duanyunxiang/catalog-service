@@ -9,5 +9,7 @@ create table book(
     last_modified_date timestamp not null,
     version integer not null,
     -- Testcontainers会使用该建表语句，初始化test用容器数据库
-    publisher varchar(255)
+    publisher varchar(255),
+    created_by varchar(255),
+    last_modified_by varchar(255)
 );

@@ -28,7 +28,7 @@ ext {
     // 指定Testcontainers版本，用于配置测试用、轻量级的postgreSql容器
     set('testcontainersVersion',"1.19.3")
     // Testcontainers Keycloak版本
-    set('testKeycloakVersion',"2.3.0")
+    set('testKeycloakVersion',"3.2.0")
 }
 
 dependencies {

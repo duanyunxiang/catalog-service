@@ -1,13 +1,26 @@
 package com.polarbookshop.catalogservice;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.polarbookshop.catalogservice.domain.Book;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 集成测试（加载应用上下文）
@@ -17,10 +30,36 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //激活profile，使用Testcontainers
 @ActiveProfiles("integration")
+//激活测试容器的自动启动和清理
+@Testcontainers
 class CatalogServiceApplicationTests {
+    private static KeycloakToken bjornTokens;
+    private static KeycloakToken isabelleTokens;
+
     //由webflux提供
     @Autowired
     private WebTestClient webTestClient;
+
+    //测试用Keycloak容器
+    @Container
+    private static final KeycloakContainer keycloakContainer=new KeycloakContainer("quay.io/keycloak/keycloak:23.0")
+            .withRealmImportFile("/test-realm-config.json");
+
+    @DynamicPropertySource
+    static void dynamicProperties(DynamicPropertyRegistry registry){
+        registry.add("spring.security.oauth2.resourceserver.jwt.issuer-uri",()->keycloakContainer.getAuthServerUrl()+"/realms/PolarBookshop");
+    }
+
+    @BeforeAll
+    static void generateAccessTokens(){
+        WebClient webClient=WebClient.builder()
+                .baseUrl(keycloakContainer.getAuthServerUrl()+"/realms/PolarBookshop/protocol/openid-connect/token")
+                .defaultHeader(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .build();
+
+        isabelleTokens=authenticateWith("isabelle","password",webClient);
+        bjornTokens=authenticateWith("bjorn","password",webClient);
+    }
 
     @Test
     void whenPostRequestThenBookCreated(){
@@ -28,17 +67,150 @@ class CatalogServiceApplicationTests {
 
         webTestClient
                 //发送post请求
-                .post().uri("/books").bodyValue(expectedBook)
+                .post().uri("/books")
+                .headers(headers->headers.setBearerAuth(isabelleTokens.accessToken()))
+                .bodyValue(expectedBook)
                 //发送
                 .exchange()
                 //期望响应码=201
-                .expectStatus().isUnauthorized()
+                .expectStatus().isCreated()
                 .expectBody(Book.class).value(actualBook->{
                     log.info("actualBook={}",actualBook);
                     //校验创建的对象符合预期
-                    Assertions.assertThat(actualBook).isNotNull();
-                    Assertions.assertThat(actualBook.isbn()).isEqualTo(expectedBook.isbn());
+                    assertThat(actualBook).isNotNull();
+                    assertThat(actualBook.isbn()).isEqualTo(expectedBook.isbn());
                 });
         log.info("测试完成");
+    }
+
+    @Test
+    void whenGetRequestWithIdThenBookReturned() {
+        var bookIsbn = "1231231230";
+        var bookToCreate = Book.of(bookIsbn, "Title", "Author", 9.90, "Polarsophia");
+        Book expectedBook = webTestClient
+                .post()
+                .uri("/books")
+                .headers(headers -> headers.setBearerAuth(isabelleTokens.accessToken()))
+                .bodyValue(bookToCreate)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody(Book.class).value(book -> assertThat(book).isNotNull())
+                .returnResult().getResponseBody();
+
+        webTestClient
+                .get()
+                .uri("/books/" + bookIsbn)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(Book.class).value(actualBook -> {
+                    assertThat(actualBook).isNotNull();
+                    assertThat(actualBook.isbn()).isEqualTo(expectedBook.isbn());
+                });
+    }
+
+    @Test
+    void whenPostRequestUnauthenticatedThen401() {
+        var expectedBook = Book.of("1231231231", "Title", "Author", 9.90, "Polarsophia");
+
+        webTestClient
+                .post()
+                .uri("/books")
+                .bodyValue(expectedBook)
+                .exchange()
+                .expectStatus().isUnauthorized();
+    }
+
+    @Test
+    void whenPostRequestUnauthorizedThen403() {
+        var expectedBook = Book.of("1231231231", "Title", "Author", 9.90, "Polarsophia");
+
+        webTestClient
+                .post()
+                .uri("/books")
+                .headers(headers -> headers.setBearerAuth(bjornTokens.accessToken()))
+                .bodyValue(expectedBook)
+                .exchange()
+                .expectStatus().isForbidden();
+    }
+
+    @Test
+    void whenPutRequestThenBookUpdated() {
+        var bookIsbn = "1231231232";
+        var bookToCreate = Book.of(bookIsbn, "Title", "Author", 9.90, "Polarsophia");
+        Book createdBook = webTestClient
+                .post()
+                .uri("/books")
+                .headers(headers -> headers.setBearerAuth(isabelleTokens.accessToken()))
+                .bodyValue(bookToCreate)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody(Book.class).value(book -> assertThat(book).isNotNull())
+                .returnResult().getResponseBody();
+        var bookToUpdate = new Book(createdBook.id(), createdBook.isbn(), createdBook.title(), createdBook.author(), 7.95,
+                createdBook.publisher(), createdBook.createDate(), createdBook.lastModifiedDate(),
+                createdBook.createdBy(), createdBook.lastModifiedBy(), createdBook.version());
+
+        webTestClient
+                .put()
+                .uri("/books/" + bookIsbn)
+                .headers(headers -> headers.setBearerAuth(isabelleTokens.accessToken()))
+                .bodyValue(bookToUpdate)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Book.class).value(actualBook -> {
+                    assertThat(actualBook).isNotNull();
+                    assertThat(actualBook.price()).isEqualTo(bookToUpdate.price());
+                });
+    }
+
+    @Test
+    void whenDeleteRequestThenBookDeleted() {
+        var bookIsbn = "1231231233";
+        var bookToCreate = Book.of(bookIsbn, "Title", "Author", 9.90, "Polarsophia");
+        webTestClient
+                .post()
+                .uri("/books")
+                .headers(headers -> headers.setBearerAuth(isabelleTokens.accessToken()))
+                .bodyValue(bookToCreate)
+                .exchange()
+                .expectStatus().isCreated();
+
+        webTestClient
+                .delete()
+                .uri("/books/" + bookIsbn)
+                .headers(headers -> headers.setBearerAuth(isabelleTokens.accessToken()))
+                .exchange()
+                .expectStatus().isNoContent();
+
+        webTestClient
+                .get()
+                .uri("/books/" + bookIsbn)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(String.class).value(errorMessage ->
+                        assertThat(errorMessage).isEqualTo("The book with ISBN " + bookIsbn + " was not found.")
+                );
+    }
+
+    private static KeycloakToken authenticateWith(String username,String password,WebClient webClient){
+        return webClient.post()
+                // 使用密码授权流程直接向Keycloak进行认证
+                .body(BodyInserters.fromFormData("grant_type","password")
+                        .with("client_id","polar-test")
+                        .with("username",username)
+                        .with("password",password)
+                )
+                .retrieve()
+                .bodyToMono(KeycloakToken.class)
+                //阻塞，直到获取结果
+                .block();
+    }
+
+    private record KeycloakToken(String accessToken) {
+        //将json反序列化为Keycloak对象时，告知Jackson使用该构造器
+        @JsonCreator
+        private KeycloakToken(@JsonProperty("access_token") final String accessToken) {
+            this.accessToken = accessToken;
+        }
     }
 }

@@ -50,3 +50,5 @@ spec:
               # 指定集群中配置服务地址
             - name: SPRING_CLOUD_CONFIG_URI
               value: http://config-service
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+              value: http://polar-keycloak/realms/PolarBookshop

@@ -83,6 +83,11 @@ server:
       # 线程池最小线程数
       min-spare: 5
 
+logging:
+  pattern:
+    # 在日志级别旁边，包含应用名、跟踪ID和跨度ID
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
 # 自定义属性
 polar:
   greeting: Welcome to the local book catalog!

@@ -29,7 +29,7 @@ spec:
         prometheus.io/port: "9001"
     spec:
       # Pod中容器的列表，本例中只有一个容器
-       containers:
+      containers:
           # Pod名
         - name: catalog-service
           image: catalog-service
@@ -75,3 +75,12 @@ spec:
               port: 9001
             initialDelaySeconds: 5
             periodSeconds: 15
+          # 将ConfigMap作为存储卷挂载到容器中
+          volumeMounts:
+            - name: catalog-config-volume
+              # spring boot会自动查找该目录下属性文件并将其包含进来
+              mountPath: /workspace/config
+      volumes:
+        - name: catalog-config-volume
+          configMap:
+            name: catalog-config

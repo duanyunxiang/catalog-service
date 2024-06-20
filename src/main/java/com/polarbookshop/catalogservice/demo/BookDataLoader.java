@@ -31,6 +31,6 @@ public class BookDataLoader {
         var book2=Book.of("1234567892","Polar Journey","Iorek Polarson",12.90);
         jdbcBookRepository.saveAll(List.of(book1,book2));
 
-        log.info("profile=testdata: data init end");
+        log.info("[profile=testdata]数据初始化完成");
     }
 }

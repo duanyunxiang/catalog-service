@@ -17,6 +17,8 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
+                        //允许未认证访问所有spring boot actuator端点
+                        .mvcMatchers("/actuator/**").permitAll()
                         //允许未认证读取图书
                         .mvcMatchers(HttpMethod.GET,"/","/books/**").permitAll()
                         //其它请求，不仅要认证，还需要employee角色，等效：hasAuthority("ROLE_employee")

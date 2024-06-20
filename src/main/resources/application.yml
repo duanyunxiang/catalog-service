@@ -51,8 +51,8 @@ management:
   endpoints:
     web:
       exposure:
-        # 通过http暴露/actuator/health端点
-        include: health
+        # 通过http暴露/actuator/health端点，/actuator/metrics为度量的端点，prometheus向Grafana暴露度量端点
+        include: health, metrics, prometheus
   endpoint:
     health:
       # 始终展示应用详情和组件详情
@@ -61,6 +61,10 @@ management:
       probes:
         # 启用对健康探针的支持
         enabled: true
+  metrics:
+    tags:
+      # 添加带有应用名称的Micrometer通用标签，这会将一个Prometheus标记应用到所有度量中
+      application: ${spring.application.name}
 
 # spring.profiles.active: testdata
 

@@ -44,8 +44,10 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
     // 使用重试模式
     implementation 'org.springframework.retry:spring-retry'
-    // 使用配置刷新
+    // 配置刷新、健康检测
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // 集成Grafana观测工具prometheus，用于收集和存储应用metrics度量信息
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 
     // 引入spring data jdbc
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'

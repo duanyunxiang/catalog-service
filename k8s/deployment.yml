@@ -22,6 +22,11 @@ spec:
       # Pod对象附加的标签，它们应该与selector使用的值匹配
       labels:
         app: catalog-service
+      annotations:
+        # 告知Prometheus要抓取该Pod中的容器
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /actuator/prometheus
+        prometheus.io/port: "9001"
     spec:
       # Pod中容器的列表，本例中只有一个容器
        containers:

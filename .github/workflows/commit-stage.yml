@@ -53,7 +53,7 @@ jobs:
           kubeval: 0.16.1
           # 替换为Kustomize形式
           command: |
-            kustomize build k8s | kubectl --strict -
+            kustomize build k8s | kubeval --strict -
   # 打包job
   package:
     name: Package and Publish

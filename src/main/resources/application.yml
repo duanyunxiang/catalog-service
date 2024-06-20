@@ -52,7 +52,7 @@ management:
     web:
       exposure:
         # 通过http暴露/actuator/health端点，/actuator/metrics为度量的端点，prometheus向Grafana暴露度量端点
-        include: health, metrics, prometheus
+        include: health, metrics, prometheus, flyway, info, heapdump
   endpoint:
     health:
       # 始终展示应用详情和组件详情
@@ -65,6 +65,20 @@ management:
     tags:
       # 添加带有应用名称的Micrometer通用标签，这会将一个Prometheus标记应用到所有度量中
       application: ${spring.application.name}
+  info:
+    env:
+      # 启用从info.属性中获取环境信息
+      enabled: true
+    java:
+      # info端点中包含Java信息
+      enabled: true
+    os:
+      # info端点中包含操作系统信息
+      enabled: true
+
+# 带有info.前缀的属性，会在/actuator/info端点中返回
+info:
+  system: Polar Bookshop
 
 # spring.profiles.active: testdata
 

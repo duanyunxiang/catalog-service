@@ -15,6 +15,11 @@ repositories {
     mavenCentral()
 }
 
+//存储构建信息到META-INF/build-info.properties文件，该文件会被BuildProperties对象解析，暴露在/actuator/info端点
+springBoot {
+    buildInfo()
+}
+
 //注解处理器
 configurations {
     compileOnly {
@@ -58,8 +63,8 @@ dependencies {
     // OpenTelemetry代理会通过字节码动态插装Java代码
     runtimeOnly "io.opentelemetry.javaagent:opentelemetry-javaagent:${otelVersion}"
 
-    //引入flyway，最新版本不支持postgreSql 14.4
-    implementation 'org.flywaydb:flyway-core:9.22.3'
+    //引入flyway
+    implementation 'org.flywaydb:flyway-core'
     // 引入OAuth2资源服务器
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 

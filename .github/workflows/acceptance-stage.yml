@@ -9,6 +9,14 @@ on:
 # 确保每次只有一个工作流在运行，只处理最新提交
 concurrency: acceptance
 
+# 变量定义
+env:
+  OWNER: duanyunxiang
+  REGISTRY: ghcr.io
+  APP_REPO: catalog-service
+  DEPLOY_REPO: polar-deployment
+  VERSION: ${{github.sha}}
+
 # 打印日志，模拟验收测试
 jobs:
   functional:
@@ -29,3 +37,24 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - run: echo "Running security tests"
+  deliver:
+    name: "发布release候选到prod"
+    needs: [ functional, performance, security ]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Deliver application to production
+        # 发送事件到另外一个仓库，并触发工作流操作
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          # 授权发送事件令牌
+          token: ${{ secrets.DISPATCH_TOKEN }}
+          # 要通知的仓库
+          repository: ${{ env.OWNER }}/${{ env.DEPLOY_REPO }}
+          # 标识事件名称(自定义)
+          event-type: app_delivery
+          # 消息载荷
+          client-payload: '{
+            "app_image": "${{ env.REGISTRY }}/${{ env.OWNER }}/${{ env.APP_REPO }}",
+            "app_name": "${{ env.APP_REPO }}",
+            "app_version": "${{ env.VERSION }}"
+          }'

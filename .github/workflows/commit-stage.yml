@@ -7,7 +7,8 @@ env:
   # 使用github容器注册中心
   REGISTRY: ghcr.io
   IMAGE_NAME: duanyunxiang/catalog-service
-  VERSION: latest
+  # 将版本号定义为commit的hash值
+  VERSION: ${{github.sha}}
 
 jobs:
   # 构建job，build是job的唯一标识符

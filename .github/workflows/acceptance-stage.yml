@@ -1,0 +1,31 @@
+# 工作流名称：验收阶段
+name: Acceptance Stage
+on:
+  workflow_run:
+    # 该工作流，会在Commit Stage之后触发
+    workflows: ['Commit Stage']
+    types: [completed]
+    branches: master
+# 确保每次只有一个工作流在运行，只处理最新提交
+concurrency: acceptance
+
+# 打印日志，模拟验收测试
+jobs:
+  functional:
+    name: "功能验收测试"
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "Running functional acceptance tests"
+  performance:
+    name: "性能测试"
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "Running performance tests"
+  security:
+    name: "安全测试"
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "Running security tests"

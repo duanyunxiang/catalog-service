@@ -8,8 +8,8 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 //加载spring上下文中的配置数据bean
 @ConfigurationPropertiesScan
 public class CatalogServiceApplication {
-
     public static void main(String[] args) {
+        // 启动
         SpringApplication.run(CatalogServiceApplication.class, args);
     }
 }
